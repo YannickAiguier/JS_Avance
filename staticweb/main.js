@@ -1,0 +1,1 @@
+let srv = require('./server');

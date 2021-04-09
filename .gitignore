@@ -1,3 +1,6 @@
 npm/node_modules
 npm/package-lock.json
+staticweb/frontend
+staticweb/node_modules
+staticweb/package-lock.json
 
