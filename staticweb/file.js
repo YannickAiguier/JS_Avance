@@ -25,6 +25,18 @@ function createAlpsDir() {
     });
 };
 
+// fonction pour lister le contenu d'un répertoire
+function readDir(path) {
+    return fs.readdir(path, {withFileTypes: true}).then((result) => {
+        console.log('Dossier trouvé...');
+        console.log(path + '/' + result);
+        result.forEach(element => console.log(element));
+    }).catch(() => {
+        console.log('Dossier introuvable !');
+    });
+}
+
 module.exports = {
     rootFolderOK: rootFolder,
+    readDir: readDir,
 };
