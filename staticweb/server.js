@@ -3,16 +3,18 @@ const app = express();
 const port = 3000;
 const file = require('./file');
 
+const TMP_ALPS = '/tmp/alps-drive/';
+
 app.use(express.static('frontend'));
 
 app.get('/api/drive', function (req, res) {
-  file.readDir('/tmp/alps-drive').then((result) => {
+  file.readDir(TMP_ALPS).then((result) => {
     res.send(result);
   });
 })
 
 app.get('/api/drive/:name', function(req, res) {
-  file.readDir('/tmp/alps-drive/' + req.params.name).then((result) => {
+  file.readDir(TMP_ALPS + req.params.name).then((result) => {
     res.send(result);
   })
 })
