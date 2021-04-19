@@ -37,6 +37,8 @@ function readDir(path) {
         if(err.code == 'ENOTDIR') {
             // c'est un fichier, on le lit (téléchargement)
             return fs.readFile(path, { encoding: 'utf8' });
+        } else {
+            console.log("Erreur");
         }
     });
 }

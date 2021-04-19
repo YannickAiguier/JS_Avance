@@ -13,14 +13,19 @@ app.get('/api/drive', function (req, res) {
 })
 
 app.get('/api/drive/:name', function(req, res) {
-  file.readDir(ALPS_DIR + req.params.name).then((result) => {
+  file.readDir(ALPS_DIR + '/' + req.params.name).then((result) => {
     res.send(result);
   })
 })
 
 app.post('/api/drive', function(req, res) {
-  console.log(ALPS_DIR, req.query.name);
   file.createDir(ALPS_DIR, req.query.name).then((result) => {
+    res.status(201).send(result);
+  })
+})
+
+app.post('/api/drive/:folder', function(req, res) {
+  file.createDir(ALPS_DIR + '/' + req.params.folder, req.query.name).then((result) => {
     res.status(201).send(result);
   })
 })
