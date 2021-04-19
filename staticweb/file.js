@@ -25,7 +25,7 @@ function createAlpsDir() {
     });
 };
 
-// fonction pour lister le contenu d'un répertoire
+// fonction pour lister le contenu d'un répertoire ou lire un fichier
 function readDir(path) {
     return fs.readdir(path, { withFileTypes: true }).then((result) => {
         const myResult = [];
@@ -43,7 +43,7 @@ function readDir(path) {
     });
 }
 
-// fonction pout créer un dossier
+// fonction pout créer un dossier 'name' dans 'dir'
 function createDir(dir, name) {
     return fs.mkdir(path.join(dir, name)).then(() => {
         console.log(`Dossier ${name} créé dans ${dir}`);
@@ -53,9 +53,20 @@ function createDir(dir, name) {
     })
 }
 
+// fonction pour supprimer un dossier ou un fichier 'name' dans 'dir'
+function deleteFileOrDir(dir, name) {
+    return fs.rm(path.join(dir, name), {recursive: true}).then(() => {
+        console.log(`Suppression de ${name} dans ${dir}`);
+    })
+    .catch((err) => {
+        console.log('Erreur à la suppression...', err);
+    })
+}
+
 module.exports = {
     rootFolderOK: rootFolder,
     readDir: readDir,
     createDir: createDir,
+    deleteFileOrDir: deleteFileOrDir,
     ALPS_DIR: ALPS_DIR
 };
