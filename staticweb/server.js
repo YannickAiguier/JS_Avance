@@ -36,6 +36,12 @@ app.delete('/api/drive/:name', function (req, res) {
   })
 })
 
+app.delete('/api/drive/:folder/:name', function(req, res) {
+  file.deleteFileOrDir(ALPS_DIR + '/' + req.params.folder, req.params.name).then((result) => {
+    res.status(201).send(result);
+  })
+})
+
 function start() {
   app.listen(port, () => {
     console.log(`Alps Box app listening at http://localhost:${port}`)
