@@ -32,9 +32,9 @@ function readDir(path) {
         result.forEach(element => {
             myResult.push({name: element.name, isFolder: element.isDirectory()});
         })
-        return myResult
+        return myResult;
     }).catch((err) => {
-        if(err.errno == -20) {
+        if(err.code == 'ENOTDIR') {
             // c'est un fichier, on le lit (téléchargement)
             return fs.readFile(path, { encoding: 'utf8' });
         }
