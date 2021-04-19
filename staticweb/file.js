@@ -27,10 +27,12 @@ function createAlpsDir() {
 
 // fonction pour lister le contenu d'un répertoire
 function readDir(path) {
-    return fs.readdir(path, {withFileTypes: true}).then((result) => {
-        console.log('Dossier trouvé...');
-        console.log(path + '/' + result);
-        result.forEach(element => console.log(element));
+    return fs.readdir(path, { withFileTypes: true }).then((result) => {
+        const myResult = [];
+        result.forEach(element => {
+            myResult.push({name: element.name, isFolder: element.isDirectory()});
+        })
+        return myResult
     }).catch(() => {
         console.log('Dossier introuvable !');
     });
