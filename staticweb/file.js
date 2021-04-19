@@ -33,8 +33,11 @@ function readDir(path) {
             myResult.push({name: element.name, isFolder: element.isDirectory()});
         })
         return myResult
-    }).catch(() => {
-        console.log('Dossier introuvable !');
+    }).catch((err) => {
+        if(err.errno == -20) {
+            // c'est un fichier, on le lit (téléchargement)
+            return fs.readFile(path, { encoding: 'utf8' });
+        }
     });
 }
 
