@@ -41,7 +41,19 @@ function readDir(path) {
     });
 }
 
+// fonction pout créer un dossier
+function createDir(dir, name) {
+    return fs.mkdir(path.join(dir, name)).then(() => {
+        console.log(`Dossier ${name} créé dans ${dir}`);
+    })
+    .catch(() => {
+        console.log('Erreur à la création du dossier...');
+    })
+}
+
 module.exports = {
     rootFolderOK: rootFolder,
     readDir: readDir,
+    createDir: createDir,
+    ALPS_DIR: ALPS_DIR
 };
