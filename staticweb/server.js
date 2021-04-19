@@ -11,6 +11,12 @@ app.get('/api/drive', function (req, res) {
   });
 })
 
+app.get('/api/drive/:name', function(req, res) {
+  file.readDir('/tmp/alps-drive/' + req.params.name).then((result) => {
+    res.send(result);
+  })
+})
+
 function start() {
   app.listen(port, () => {
     console.log(`Alps Box app listening at http://localhost:${port}`)
