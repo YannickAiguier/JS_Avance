@@ -16,6 +16,15 @@ function rootFolder() {
         });
 };
 
+// fonction pour vérifier qu'un dossier existe
+function folderExists(name) {
+    return fs.readdir(name).then(() => {
+        
+    }).catch((err) => {
+        return err;
+    })
+}
+
 // fonction pour créer le répertoire /tmp/alps-drive
 function createAlpsDir() {
     return fs.mkdir(ALPS_DIR).then(() => {
@@ -30,16 +39,16 @@ function readDir(path) {
     return fs.readdir(path, { withFileTypes: true }).then((result) => {
         const myResult = [];
         result.forEach(element => {
-            myResult.push({name: element.name, isFolder: element.isDirectory()});
+            myResult.push({ name: element.name, isFolder: element.isDirectory() });
         })
         return myResult;
     }).catch((err) => {
-        if(err.code == 'ENOTDIR') {
+        if (err.code == 'ENOTDIR') {
             // c'est un fichier, on le lit
-            console.log(`Lecture de ${path}`)
-            return fs.readFile(path, { encoding: 'utf8' });
+            console.log(`Lecture de ${path}`);
+            return fs.readFile(path);
         } else {
-            console.log("Erreur");
+            return err;
         }
     });
 }
@@ -48,20 +57,19 @@ function readDir(path) {
 function createDir(dir, name) {
     return fs.mkdir(path.join(dir, name)).then(() => {
         console.log(`Dossier ${name} créé dans ${dir}`);
-    })
-    .catch(() => {
+    }).catch(() => {
         console.log('Erreur à la création du dossier...');
     })
 }
 
 // fonction pour supprimer un dossier ou un fichier 'name' dans 'dir'
 function deleteFileOrDir(dir, name) {
-    return fs.rm(path.join(dir, name), {recursive: true}).then(() => {
+    return fs.rm(path.join(dir, name), { recursive: true }).then(() => {
         console.log(`Suppression de ${name} dans ${dir}`);
     })
-    .catch((err) => {
-        console.log('Erreur à la suppression...', err);
-    })
+        .catch((err) => {
+            console.log('Erreur à la suppression...', err);
+        })
 }
 
 // fonction pour créer un fichier 'name' dans 'dir' depuis le fichier 'src'
@@ -69,9 +77,15 @@ function addFile(name, dir, src) {
     return fs.copyFile(src, path.join(dir, name)).then((result) => {
         return result;
     })
-    .catch((err) => {
-        console.log(err);
-    })
+        .catch((err) => {
+            console.log(err);
+        })
+}
+
+// fonction pour vérifier que le nom de fichier ne comporte que des caractères alpha-numériques
+function isAlphanumeric(str) {
+    const myRegexp = new RegExp('^[a-zA-Z0-9]*$', 'g');
+    return myRegexp.test(str);
 }
 
 module.exports = {
@@ -80,5 +94,7 @@ module.exports = {
     createDir: createDir,
     deleteFileOrDir: deleteFileOrDir,
     addFile: addFile,
+    isAlphanumeric: isAlphanumeric,
+    folderExists: folderExists,
     ALPS_DIR: ALPS_DIR
 };
