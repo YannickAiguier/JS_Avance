@@ -35,7 +35,8 @@ function readDir(path) {
         return myResult;
     }).catch((err) => {
         if(err.code == 'ENOTDIR') {
-            // c'est un fichier, on le lit (téléchargement)
+            // c'est un fichier, on le lit
+            console.log(`Lecture de ${path}`)
             return fs.readFile(path, { encoding: 'utf8' });
         } else {
             console.log("Erreur");
@@ -63,10 +64,21 @@ function deleteFileOrDir(dir, name) {
     })
 }
 
+// fonction pour créer un fichier 'name' dans 'dir' depuis le fichier 'src'
+function addFile(name, dir, src) {
+    return fs.copyFile(src, path.join(dir, name)).then((result) => {
+        return result;
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+}
+
 module.exports = {
     rootFolderOK: rootFolder,
     readDir: readDir,
     createDir: createDir,
     deleteFileOrDir: deleteFileOrDir,
+    addFile: addFile,
     ALPS_DIR: ALPS_DIR
 };

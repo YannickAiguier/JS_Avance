@@ -2,7 +2,13 @@ const express = require('express');
 const { ALPS_DIR } = require('./file');
 const app = express();
 const port = 3000;
+const bb = require('express-busboy');
 const file = require('./file');
+
+bb.extend(app, {
+  upload: true,
+  path: '/tmp/busboy/'
+});
 
 app.use(express.static('frontend'));
 
@@ -39,6 +45,12 @@ app.delete('/api/drive/:name', function (req, res) {
 app.delete('/api/drive/:folder/:name', function(req, res) {
   file.deleteFileOrDir(ALPS_DIR + '/' + req.params.folder, req.params.name).then((result) => {
     res.status(201).send(result);
+  })
+})
+
+app.put('/api/drive', function(req, res) {
+  file.addFile(req.files.file.filename, ALPS_DIR, req.files.file.file).then((result) => {
+    res.send(result);
   })
 })
 
