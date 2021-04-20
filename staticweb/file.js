@@ -16,15 +16,6 @@ function rootFolder() {
         });
 };
 
-// fonction pour vérifier qu'un dossier existe
-function folderExists(name) {
-    return fs.readdir(name).then(() => {
-        
-    }).catch((err) => {
-        return err;
-    })
-}
-
 // fonction pour créer le répertoire /tmp/alps-drive
 function createAlpsDir() {
     return fs.mkdir(ALPS_DIR).then(() => {
@@ -37,11 +28,31 @@ function createAlpsDir() {
 // fonction pour lister le contenu d'un répertoire ou lire un fichier
 function readDir(path) {
     return fs.readdir(path, { withFileTypes: true }).then((result) => {
+        // c'est un dossier, on liste le contenu et on le renvoie en JSON dans myResult
         const myResult = [];
+        const myPromises = [];
         result.forEach(element => {
-            myResult.push({ name: element.name, isFolder: element.isDirectory() });
-        })
-        return myResult;
+            if (element.isDirectory()) {
+                // pour un dossier on ajoute juste les infos au tableau myResult
+                myResult.push({ name: element.name, isFolder: element.isDirectory() });
+            } else {
+                // pour un fichier on ajoute une promesse (qui récupèrera la taille de fichier) au tableau myPromises
+                myPromises.push(new Promise((resolve) => {
+                    resolve(fs.stat(path + '/' + element.name).then((result) => {
+                        return { name: element.name, size: result.size, isFolder: element.isDirectory() };
+                    }));
+                }));
+            }
+        });
+        // on utilise le tableau myPromises pour récupérer toutes les tailles des fichiers, ajouter les infos
+        // à myResult puis l'envoie comme résultat final
+        return Promise.all(myPromises).then((values) => {
+            values.forEach(value => {
+                myResult.push(value);            
+            })
+            console.log('myResult : ', myResult);
+            return myResult;
+        });  
     }).catch((err) => {
         if (err.code == 'ENOTDIR') {
             // c'est un fichier, on le lit
@@ -95,6 +106,5 @@ module.exports = {
     deleteFileOrDir: deleteFileOrDir,
     addFile: addFile,
     isAlphanumeric: isAlphanumeric,
-    folderExists: folderExists,
     ALPS_DIR: ALPS_DIR
 };

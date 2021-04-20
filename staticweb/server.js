@@ -17,6 +17,7 @@ app.use(express.static('frontend'));
 // affiche le contenu de la racine du drive
 app.get('/api/drive', function (req, res) {
   file.readDir(ALPS_DIR).then((result) => {
+    console.log(result);
     res.send(result);
   });
 })
