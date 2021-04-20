@@ -54,6 +54,12 @@ app.put('/api/drive', function(req, res) {
   })
 })
 
+app.put('/api/drive/:folder', function(req, res) {
+  file.addFile(req.files.file.filename, ALPS_DIR + '/' + req.params.folder, req.files.file.file).then((result) => {
+    res.send(result);
+  })
+})
+
 function start() {
   app.listen(port, () => {
     console.log(`Alps Box app listening at http://localhost:${port}`)
