@@ -7,7 +7,7 @@ const ALPS_DIR = path.join((TMP_DIR), 'alps-drive');
 
 // fonction pour définir le répertoire de base /tmp/alps-drive : on demande son contenu avec readdir
 // soit il existe (then) et on ne fait rien, soit il n'existe pas (catch) et on le crée
-function rootFolder() {
+function rootFolderOK() {
     return fs.readdir(ALPS_DIR)
         .then(() => {
             console.log(`Le dossier ${ALPS_DIR} existe déjà.`);
@@ -67,8 +67,8 @@ function readDir(path) {
 function createDir(dir, name) {
     return fs.mkdir(path.join(dir, name)).then(() => {
         console.log(`Dossier ${name} créé dans ${dir}`);
-    }).catch(() => {
-        console.log('Erreur à la création du dossier...');
+    }).catch((err) => {
+        console.log('Erreur à la création du dossier...', err);
     })
 }
 
@@ -99,7 +99,7 @@ function isAlphanumeric(str) {
 }
 
 module.exports = {
-    rootFolderOK: rootFolder,
+    rootFolderOK,
     readDir,
     createDir,
     deleteFileOrDir,

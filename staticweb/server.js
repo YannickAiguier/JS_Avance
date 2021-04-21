@@ -14,54 +14,30 @@ bb.extend(app, {
 // utilisation d'un routeur pour gérer les routes récursives
 const router = express.Router();
 router.use(function (req, res, next) {
-  req.myPath = req.url.slice(11);
+  // fonction middleware qui récupère le path dans l'url (après /api/drive/ et avant le premier ?)
+  req.myPath = req.url.slice(11, req.url.indexOf('?'));
   next();
 })
 
-// GET /api/drive
-// affiche le contenu de la racine du drive
+// GET /api/drive/*
+// affiche le contenu du dossier ou fichier demandé
 router.get('/*', function (req, res) {
   file.readDir(ALPS_DIR + '/' + req.myPath).then((result) => {
     res.send(result);
   });
 })
 
-// // GET /api/drive/{name}
-// // affiche le contenu du dossier ou fichier 'name' situé à la racine du drive
-// router.get('/api/drive/:name', function (req, res) {
-//   file.readDir(ALPS_DIR + '/' + req.params.name).then((result) => {
-//   console.log(req.myPath);
-//     if (result.code == 'ENOENT') {
-//       res.status(404).send("Le dossier/fichier n'existe pas");
-//     } else {
-//       res.send(result);
-//     }
-//   })
-// })
-
-// POST /api/drive?name={name}
-// crée le dossier 'name' à la racine du drive
-router.post('/api/drive', function (req, res) {
+// POST /api/drive*?name={name}
+// crée le dossier 'name' dans le dossier demandé
+router.post('/*', function (req, res) {
   if (file.isAlphanumeric(req.query.name)) {
-    file.createDir(ALPS_DIR, req.query.name).then((result) => {
+    file.createDir(ALPS_DIR + '/' + req.myPath, req.query.name).then((result) => {
       res.status(201).send(result);
     })
   } else {
     res.status(400).send('Le nom doit contenir seulement des caractères alphanumériques');
   }
 
-})
-
-// POST /api/drive/{folder}?name={name}
-// crée le dossier 'name' dans 'racine/folder'
-router.post('/api/drive/:folder', function (req, res) {
-  if (file.isAlphanumeric(req.query.name)) {
-    file.createDir(ALPS_DIR + '/' + req.params.folder, req.query.name).then((result) => {
-      res.status(201).send(result);
-    })
-  } else {
-    res.status(400).send('Le nom doit contenir seulement des caractères alphanumériques');
-  }
 })
 
 // DELETE /api/drive/{name}
