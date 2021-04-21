@@ -50,7 +50,6 @@ function readDir(path) {
             values.forEach(value => {
                 myResult.push(value);            
             })
-            console.log('myResult : ', myResult);
             return myResult;
         });  
     }).catch((err) => {
@@ -101,10 +100,10 @@ function isAlphanumeric(str) {
 
 module.exports = {
     rootFolderOK: rootFolder,
-    readDir: readDir,
-    createDir: createDir,
-    deleteFileOrDir: deleteFileOrDir,
-    addFile: addFile,
-    isAlphanumeric: isAlphanumeric,
-    ALPS_DIR: ALPS_DIR
+    readDir,
+    createDir,
+    deleteFileOrDir,
+    addFile,
+    isAlphanumeric,
+    ALPS_DIR,
 };
