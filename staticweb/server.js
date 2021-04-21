@@ -16,7 +16,7 @@ const router = express.Router();
 router.use(function (req, res, next) {
   // fonction middleware qui récupère le path dans l'url (après /api/drive/ et avant le premier ?)
   const endIndex = req.url.indexOf('?');
-  if (endIndex == -1) {
+  if (endIndex == -1) { // pas de ? dans l'url
     req.myPath = req.url.slice(11);
   } else {
     req.myPath = req.url.slice(11, endIndex);
@@ -45,8 +45,8 @@ router.post('/*', function (req, res) {
 
 })
 
-// DELETE /api/drive/{name}
-// supprime le dossier ou fichier 'racine/name'
+// DELETE /api/drive/*/{name}
+// supprime le dossier ou fichier demandé
 router.delete('/*/:name', function (req, res) {
   if (file.isAlphanumeric(req.params.name)) {
     file.deleteFileOrDir(ALPS_DIR + '/' + req.myPath, req.params.name).then((result) => {
@@ -57,18 +57,10 @@ router.delete('/*/:name', function (req, res) {
   }
 })
 
-// PUT /api/drive
-// crée un fichier à la racine du drive
-router.put('/api/drive', function (req, res) {
-  file.addFile(req.files.file.filename, ALPS_DIR, req.files.file.file).then((result) => {
-    res.status(201).send(result);
-  })
-})
-
-// PUT /api/drive/{folder}
-// crée un fichier dans 'racine/folder'
-router.put('/api/drive/:folder', function (req, res) {
-  file.addFile(req.files.file.filename, ALPS_DIR + '/' + req.params.folder, req.files.file.file).then((result) => {
+// PUT /api/drive/*
+// crée un fichier dans le dossier demandé
+router.put('/*', function (req, res) {
+  file.addFile(req.files.file.filename, ALPS_DIR + '/' + req.myPath, req.files.file.file).then((result) => {
     res.status(201).send(result);
   })
 })
