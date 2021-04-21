@@ -73,7 +73,7 @@ function createDir(dir, name) {
 }
 
 // fonction pour supprimer un dossier ou un fichier 'name' dans 'dir'
-function deleteFileOrDir(dir, name) {
+function deleteFileOrDir(dir) {
     return fs.rm(dir, { recursive: true }).then(() => {
         console.log(`Suppression de ${dir}`);
     })

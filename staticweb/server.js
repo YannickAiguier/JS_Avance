@@ -13,7 +13,8 @@ bb.extend(app, {
 
 // utilisation d'un routeur pour gérer les routes récursives
 const router = express.Router();
-router.use(function (req, res, next) {
+router.route('/*')
+.all(function (req, res, next) {
   // fonction middleware qui récupère le path dans l'url (après /api/drive/ et avant le premier ?)
   const endIndex = req.url.indexOf('?');
   if (endIndex == -1) { // pas de ? dans l'url
@@ -26,7 +27,7 @@ router.use(function (req, res, next) {
 
 // GET /api/drive/*
 // affiche le contenu du dossier ou fichier demandé
-router.get('/*', function (req, res) {
+.get(function (req, res) {
   file.readDir(ALPS_DIR + '/' + req.myPath).then((result) => {
     res.send(result);
   });
@@ -34,7 +35,7 @@ router.get('/*', function (req, res) {
 
 // POST /api/drive*?name={name}
 // crée le dossier 'name' dans le dossier demandé
-router.post('/*', function (req, res) {
+.post(function (req, res) {
   if (file.isAlphanumeric(req.query.name)) {
     file.createDir(ALPS_DIR + '/' + req.myPath, req.query.name).then((result) => {
       res.status(201).send(result);
@@ -45,11 +46,12 @@ router.post('/*', function (req, res) {
 
 })
 
-// DELETE /api/drive/*/{name}
+// DELETE /api/drive/*
 // supprime le dossier ou fichier demandé
-router.delete('/*/:name', function (req, res) {
-  if (file.isAlphanumeric(req.params.name)) {
-    file.deleteFileOrDir(ALPS_DIR + '/' + req.myPath, req.params.name).then((result) => {
+.delete(function (req, res) {
+  const name = req.myPath.slice(req.myPath.lastIndexOf('/') + 1);
+  if (file.isAlphanumeric(name)) {
+    file.deleteFileOrDir(ALPS_DIR + '/' + req.myPath).then((result) => {
       res.status(201).send(result);
     })
   } else {
@@ -59,7 +61,7 @@ router.delete('/*/:name', function (req, res) {
 
 // PUT /api/drive/*
 // crée un fichier dans le dossier demandé
-router.put('/*', function (req, res) {
+.put(function (req, res) {
   file.addFile(req.files.file.filename, ALPS_DIR + '/' + req.myPath, req.files.file.file).then((result) => {
     res.status(201).send(result);
   })
@@ -70,7 +72,6 @@ function start() {
     console.log(`Alps Box app listening at http://localhost:${port}`)
   });
 };
-
 
 app.use(express.static('frontend'));
 app.use('/', router);
