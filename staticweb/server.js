@@ -15,7 +15,12 @@ bb.extend(app, {
 const router = express.Router();
 router.use(function (req, res, next) {
   // fonction middleware qui récupère le path dans l'url (après /api/drive/ et avant le premier ?)
-  req.myPath = req.url.slice(11, req.url.indexOf('?'));
+  const endIndex = req.url.indexOf('?');
+  if (endIndex == -1) {
+    req.myPath = req.url.slice(11);
+  } else {
+    req.myPath = req.url.slice(11, endIndex);
+  }
   next();
 })
 
@@ -42,20 +47,9 @@ router.post('/*', function (req, res) {
 
 // DELETE /api/drive/{name}
 // supprime le dossier ou fichier 'racine/name'
-router.delete('/api/drive/:name', function (req, res) {
-  if (file.isAlphanumeric(req.query.name)) {
-    file.deleteFileOrDir(ALPS_DIR, req.params.name).then((result) => {
-      res.status(201).send(result);
-    })
-  } else {
-    res.status(400).send('Le nom doit contenir seulement des caractères alphanumériques');
-  }
-})
-// DELETE /api/drive/{folder}/{name}
-// supprime le dossier ou fichier 'racine/folder/name'
-router.delete('/api/drive/:folder/:name', function (req, res) {
-  if (file.isAlphanumeric(req.query.name)) {
-    file.deleteFileOrDir(ALPS_DIR + '/' + req.params.folder, req.params.name).then((result) => {
+router.delete('/*/:name', function (req, res) {
+  if (file.isAlphanumeric(req.params.name)) {
+    file.deleteFileOrDir(ALPS_DIR + '/' + req.myPath, req.params.name).then((result) => {
       res.status(201).send(result);
     })
   } else {

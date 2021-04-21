@@ -74,8 +74,8 @@ function createDir(dir, name) {
 
 // fonction pour supprimer un dossier ou un fichier 'name' dans 'dir'
 function deleteFileOrDir(dir, name) {
-    return fs.rm(path.join(dir, name), { recursive: true }).then(() => {
-        console.log(`Suppression de ${name} dans ${dir}`);
+    return fs.rm(dir, { recursive: true }).then(() => {
+        console.log(`Suppression de ${dir}`);
     })
         .catch((err) => {
             console.log('Erreur à la suppression...', err);
@@ -92,9 +92,9 @@ function addFile(name, dir, src) {
         })
 }
 
-// fonction pour vérifier que le nom de fichier ne comporte que des caractères alpha-numériques
+// fonction pour vérifier que le nom de fichier ne comporte que des caractères alpha-numériques et .-_
 function isAlphanumeric(str) {
-    const myRegexp = new RegExp('^[a-zA-Z0-9]*$', 'g');
+    const myRegexp = new RegExp('^[.-_a-zA-Z0-9]*$', 'g');
     return myRegexp.test(str);
 }
 
