@@ -4,6 +4,9 @@ const { ALPS_DIR} = require('./file');
 const app = express();
 const port = 3000;
 
+// pour pourvoir zippé
+const zip = require('./zip');
+
 // module express-busboy, pour récupérer les fichers envoyés lors des requêtes PUT
 const bb = require('express-busboy');
 bb.extend(app, {
@@ -28,13 +31,20 @@ router.route('/api/drive*')
   // GET /api/drive/*
   // affiche le contenu du dossier ou fichier demandé
   .get(function (req, res) {
-    file.readDir(ALPS_DIR + '/' + req.myPath).then((result) => {
-      if (result.errno) {
-        res.status(404).send(result);
-      } else {
-        res.status(200).send(result);
-      }
-    })
+    if(req.query.zip == 'true') {
+      // envoyer en zippé
+      zip.doZip(ALPS_DIR + '/' + req.myPath, '/tmp/files.zip').then((result) => {
+        res.status(200).sendFile('/tmp/files.zip');
+      })
+    } else {
+      file.readDir(ALPS_DIR + '/' + req.myPath).then((result) => {
+        if (result.errno) {
+          res.status(404).send(result);
+        } else {
+          res.status(200).send(result);
+        }
+      })
+    }    
   })
 
   // POST /api/drive*?name={name}
