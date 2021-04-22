@@ -7,6 +7,7 @@ const ALPS_DIR = path.join((TMP_DIR), 'alps-drive');
 
 // fonction pour définir le répertoire de base /tmp/alps-drive : on demande son contenu avec readdir
 // soit il existe (then) et on ne fait rien, soit il n'existe pas (catch) et on le crée
+// retourne une promesse
 function rootFolderOK() {
     return fs.readdir(ALPS_DIR)
         .then(() => {
@@ -17,6 +18,7 @@ function rootFolderOK() {
 };
 
 // fonction pour créer le répertoire /tmp/alps-drive
+// retourne une promesse
 function createAlpsDir() {
     return fs.mkdir(ALPS_DIR).then(() => {
         console.log(`Création du dossier ${ALPS_DIR}.`);
@@ -26,6 +28,7 @@ function createAlpsDir() {
 };
 
 // fonction pour lister le contenu d'un répertoire ou lire un fichier
+// retourne une promesse
 function readDir(path) {
     return fs.readdir(path, { withFileTypes: true }).then((result) => {
         // c'est un dossier, on liste le contenu et on le renvoie en JSON dans myResult
@@ -64,38 +67,57 @@ function readDir(path) {
 }
 
 // fonction pout créer un dossier 'name' dans 'dir'
-function createDir(dir, name) {
-    return fs.mkdir(path.join(dir, name)).then(() => {
-        console.log(`Dossier ${name} créé dans ${dir}`);
+// retourne une promesse
+function createDir(dir) {
+    return fs.mkdir(dir).then(() => {
+        console.log(`Dossier ${dir} créé`);
+        return {};
     }).catch((err) => {
         console.log('Erreur à la création du dossier...', err);
+        return err;
     })
 }
 
 // fonction pour supprimer un dossier ou un fichier 'name' dans 'dir'
+// retourne une promesse
 function deleteFileOrDir(dir) {
     return fs.rm(dir, { recursive: true }).then(() => {
         console.log(`Suppression de ${dir}`);
+        return {};
     })
         .catch((err) => {
-            console.log('Erreur à la suppression...', err);
+            console.log('Erreur à la suppression...');
+            return err;
         })
 }
 
 // fonction pour créer un fichier 'name' dans 'dir' depuis le fichier 'src'
+// retourne une promesse
 function addFile(name, dir, src) {
     return fs.copyFile(src, path.join(dir, name)).then((result) => {
-        return result;
+        console.log(`Création de ${name} dans ${dir}`);
+        return {};
     })
         .catch((err) => {
-            console.log(err);
+            return err;
         })
 }
 
-// fonction pour vérifier que le nom de fichier ne comporte que des caractères alpha-numériques et .-_
+// fonction pour vérifier que le nom de fichier ne comporte que des caractères alpha-numériques et ._-
+// retourne un booléen
 function isAlphanumeric(str) {
-    const myRegexp = new RegExp('^[.-_a-zA-Z0-9]*$', 'g');
+    const myRegexp = new RegExp('^[a-zA-Z0-9._-]*$');
     return myRegexp.test(str);
+}
+
+// fonction pour vérifier qu'un dossier existe
+// retourne une promesse
+function folderExists(dir) {
+    return fs.stat(dir).then((result) => {
+        return true;
+    }).catch((err) => {
+        return false;
+    })
 }
 
 module.exports = {
@@ -105,5 +127,6 @@ module.exports = {
     deleteFileOrDir,
     addFile,
     isAlphanumeric,
+    folderExists,
     ALPS_DIR,
 };
