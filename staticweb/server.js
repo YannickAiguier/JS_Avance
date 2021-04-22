@@ -47,7 +47,7 @@ router.route('/api/drive*')
             if (result.errno) {
               res.status(404).send(result);
             } else {
-              res.status(200).send(result);
+              res.status(200).location('/api/drive/' + req.myPath + '/' + req.query.name).send(result);
             }
           })
         } else {res.status(404).send("Le dossier n'existe pas");
