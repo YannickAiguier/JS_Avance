@@ -1,3 +1,4 @@
+//module qui gère les accès aux fichiers (liste, création suppression, ...) avec des promesses
 const fs = require('fs/promises');
 const os = require('os');
 const path = require('path');
